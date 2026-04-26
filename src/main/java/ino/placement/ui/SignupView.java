@@ -11,6 +11,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -48,9 +49,17 @@ public class SignupView extends VerticalLayout {
         email.setPrefixComponent(VaadinIcon.ENVELOPE.create());
         email.setWidthFull();
 
-        TextField password = new TextField("Password");
+        // ✅ PASSWORD FIELD
+        PasswordField password = new PasswordField("Password");
         password.setPrefixComponent(VaadinIcon.LOCK.create());
         password.setWidthFull();
+        password.setRevealButtonVisible(true);
+
+        // ✅ CONFIRM PASSWORD FIELD
+        PasswordField confirmPassword = new PasswordField("Confirm Password");
+        confirmPassword.setPrefixComponent(VaadinIcon.LOCK.create());
+        confirmPassword.setWidthFull();
+        confirmPassword.setRevealButtonVisible(true);
 
         TextField dept = new TextField("Department");
         dept.setWidthFull();
@@ -60,6 +69,19 @@ public class SignupView extends VerticalLayout {
 
         Button register = new Button("Register", e -> {
             try {
+
+                // 🔒 VALIDATION: Empty fields
+                if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+                    showError("Please fill all required fields");
+                    return;
+                }
+
+                // 🔒 VALIDATION: Password match
+                if (!password.getValue().equals(confirmPassword.getValue())) {
+                    showError("Passwords do not match");
+                    return;
+                }
+
                 Student s = new Student();
                 s.setFullName(name.getValue());
                 s.setEmail(email.getValue());
@@ -70,9 +92,17 @@ public class SignupView extends VerticalLayout {
                 service.save(s);
 
                 Notification.show("Registered successfully!", 3000, Notification.Position.TOP_CENTER);
+
+                // ✅ Clear fields after success
+                name.clear();
+                email.clear();
+                password.clear();
+                confirmPassword.clear();
+                dept.clear();
+                batch.clear();
+
             } catch (Exception ex) {
-                Notification n = Notification.show("Error: " + ex.getMessage());
-                n.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                showError("Error: " + ex.getMessage());
             }
         });
 
@@ -83,8 +113,59 @@ public class SignupView extends VerticalLayout {
                 e -> getUI().ifPresent(ui -> ui.navigate("login")));
         login.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
-        card.add(title, name, email, password, dept, batch, register, login);
+        card.add(title, name, email, password, confirmPassword, dept, batch, register, login);
 
         add(card);
     }
+
+    private void showError(String message) {
+        Notification n = Notification.show(message);
+        n.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        n.setPosition(Notification.Position.TOP_CENTER);
+        n.setDuration(3000);
+    }
 }
+/*
+1. Student Management
+View all registered students
+Search/filter students (by name, email)
+View individual student profiles
+Delete or deactivate student accounts
+📊 2. Global Analytics
+Total number of students
+Average scores across all students
+Overall placement readiness distribution
+Performance trends (coding, aptitude, interview)
+📈 3. Student Performance Monitoring
+View detailed performance of any student
+See latest assessment scores
+Track progress over time
+Identify weak and strong areas
+📝 4. Assessment Management
+Add new assessment types (if expandable)
+View all submitted assessments
+Edit or delete incorrect entries
+Filter assessments by date/type
+🎯 5. Readiness Overview
+List of all students with readiness status
+Filter students:
+Ready / Not Ready
+Weak in specific area
+Highlight top-performing students
+🚨 6. At-Risk Student Identification
+Automatically detect students with low scores
+Show “needs improvement” list
+Focus on weak categories (e.g., aptitude < 40%)
+💡 7. Suggestion Monitoring
+View suggestions generated for each student
+Analyze common weak areas across students
+Improve suggestion logic based on trends
+🔐 8. Admin Access Control
+Separate login for admin
+Restrict student-only features
+Secure admin routes/views
+10. Dashboard UI Features
+Summary cards (Total Students, Avg Score, Ready %)
+Tables with sorting & filtering
+Simple charts (bar/line graphs)
+*/

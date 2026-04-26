@@ -1,6 +1,7 @@
 package ino.placement.ui;
 
 import ino.placement.entity.Student;
+import ino.placement.entity.Role;
 import ino.placement.service.AuthService;
 import ino.placement.util.SessionUtil;
 
@@ -32,7 +33,7 @@ public class LoginView extends VerticalLayout {
         setAlignItems(FlexComponent.Alignment.CENTER);
         setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
 
-        // Background gradient (modern look)
+        // Background gradient
         getStyle().set("background", "linear-gradient(to right, #667eea, #764ba2)");
 
         // Login Card
@@ -80,7 +81,12 @@ public class LoginView extends VerticalLayout {
 
                 SessionUtil.setUser(s);
 
-                getUI().ifPresent(ui -> ui.navigate("home"));
+                // ✅ ROLE-BASED REDIRECT
+                if (s.getRole() == Role.ADMIN) {
+                    getUI().ifPresent(ui -> ui.navigate("admin"));
+                } else {
+                    getUI().ifPresent(ui -> ui.navigate("home"));
+                }
 
             } catch (Exception ex) {
                 showError("Invalid email or password");
@@ -90,11 +96,12 @@ public class LoginView extends VerticalLayout {
         // Divider
         Hr divider = new Hr();
 
-        // Signup section
+        // Signup section (FIXED + VISIBLE)
         HorizontalLayout signupLayout = new HorizontalLayout();
         signupLayout.setAlignItems(Alignment.CENTER);
 
         Span text = new Span("New user?");
+        
         Button signupBtn = new Button("Create Account",
                 e -> getUI().ifPresent(ui -> ui.navigate("signup")));
         signupBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);

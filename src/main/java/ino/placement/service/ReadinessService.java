@@ -1,56 +1,72 @@
 package ino.placement.service;
 
-import ino.placement.dto.ReadinessResponse;
+import ino.placement.entity.AssessmentResult;
 import ino.placement.repository.AssessmentResultRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import ino.placement.dto.ReadinessResponse;
+
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ReadinessService {
 
-    @Autowired
-    private AssessmentResultRepository repository;
+    private final AssessmentResultRepository repo;
+
+    public ReadinessService(AssessmentResultRepository repo) {
+        this.repo = repo;
+    }
 
     public ReadinessResponse evaluateStudent(Long studentId) {
 
-        double coding = getPercentage(studentId, "Coding");
-        double aptitude = getPercentage(studentId, "Aptitude");
-        double core = getPercentage(studentId, "Interview"); // using Interview as core
+        List<AssessmentResult> list = repo.findByStudentId(studentId);
 
-        String status;
-        String message;
+        double coding = 0;
+        double aptitude = 0;
+        double interview = 0;
 
-        if (coding < 50) {
-            status = "NOT_READY";
-            message = "Your coding skills are below required level. Focus on DSA and problem solving.";
-        } else if (aptitude < 40) {
-            status = "PARTIALLY_READY";
-            message = "You are good in coding but need improvement in aptitude.";
-        } else if (coding >= 70 && aptitude >= 70 && core >= 70) {
-            status = "INTERVIEW_READY";
-            message = "You are well prepared for technical interviews.";
-        } else {
-            status = "PARTIALLY_READY";
-            message = "You have moderate performance. Improve weak areas.";
+        for (AssessmentResult a : list) {
+
+            String type = a.getAssessmentType();
+
+            if (type == null) continue;
+
+            type = type.trim().toLowerCase();
+
+            switch (type) {
+
+                case "coding":
+                    coding = a.getScoreObtained();
+                    break;
+
+                case "aptitude":
+                    aptitude = a.getScoreObtained();
+                    break;
+
+                case "interview":
+                    interview = a.getScoreObtained();
+                    break;
+            }
         }
 
-        return new ReadinessResponse(
-                status,
-                message,
-                (int) coding,
-                (int) aptitude,
-                (int) core
-        );
-    }
+        double avg = (coding + aptitude + interview) / 3;
 
-    private double getPercentage(Long studentId, String type) {
-        return repository
-                .findTopByStudent_IdAndAssessmentTypeOrderByAssessmentDateDesc(studentId, type)
-                .map(result -> {
-                    if (result.getMaxScore() == 0) return 0.0;
-                    return (result.getScoreObtained() / result.getMaxScore()) * 100;
-                })
-                .orElse(0.0);
+        ReadinessResponse r = new ReadinessResponse();
+        r.setCodingScore((int) coding);
+        r.setAptitudeScore((int) aptitude);
+        r.setInterviewScore((int) interview);
+
+        if (avg >= 75) {
+            r.setStatus("INTERVIEW_READY");
+            r.setMessage("Ready for placements");
+        } else if (avg >= 50) {
+            r.setStatus("ALMOST_READY");
+            r.setMessage("Needs improvement");
+        } else {
+            r.setStatus("NOT_READY");
+            r.setMessage("Focus on basics");
+        }
+
+        return r;
     }
 }
-

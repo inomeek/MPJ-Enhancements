@@ -10,13 +10,14 @@ public class ReadinessUtil {
 
         if (list == null || list.isEmpty()) return 0;
 
-        // Normalize & keep latest per type
         Map<String, AssessmentResult> latestMap = new HashMap<>();
 
         for (AssessmentResult a : list) {
 
-            if (a.getAssessmentType() == null || a.getAssessmentDate() == null) continue;
+            if (a.getAssessmentType() == null || a.getAssessmentDate() == null)
+                continue;
 
+            // ✅ SAFE STRING USAGE
             String type = a.getAssessmentType().trim().toLowerCase();
 
             if (!latestMap.containsKey(type) ||
@@ -30,11 +31,11 @@ public class ReadinessUtil {
 
         for (AssessmentResult a : latestMap.values()) {
 
-            if (a.getMaxScore() == null || a.getMaxScore() == 0) continue;
+            if (a.getMaxScore() == null || a.getMaxScore() == 0)
+                continue;
 
             double percent = (a.getScoreObtained() / a.getMaxScore()) * 100;
 
-            // 🔥 Clamp between 0–100
             percent = Math.max(0, Math.min(100, percent));
 
             total += percent;

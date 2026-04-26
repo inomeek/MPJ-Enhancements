@@ -1,11 +1,14 @@
 package ino.placement.service;
 
 import ino.placement.entity.Student;
+import ino.placement.entity.Role;
 import ino.placement.repository.StudentRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -16,31 +19,60 @@ public class StudentService {
         this.repo = repo;
     }
 
-    // Finds a student by ID - used by the Controller to verify existence
+    // ✅ Get all students (ONLY STUDENTS, not admins)
+    public List<Student> getAllStudents() {
+        return repo.findAll()
+                .stream()
+                .filter(s -> s.getRole() == Role.STUDENT)
+                .collect(Collectors.toList());
+    }
+
+    // ✅ Search students by name or email
+    public List<Student> search(String keyword) {
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getAllStudents();
+        }
+
+        String lower = keyword.toLowerCase();
+
+        return repo.findAll()
+                .stream()
+                .filter(s -> s.getRole() == Role.STUDENT)
+                .filter(s ->
+                        (s.getFullName() != null && s.getFullName().toLowerCase().contains(lower)) ||
+                        (s.getEmail() != null && s.getEmail().toLowerCase().contains(lower))
+                )
+                .collect(Collectors.toList());
+    }
+
+    // ✅ Get by ID
     public Optional<Student> getById(Long id) {
         return repo.findById(id);
     }
 
-    // This handles both POST (new) and PUT (update) in JPA
+    // ✅ Save student
     public Student save(Student s) {
         return repo.save(s);
     }
 
-    public List<Student> getAll() {
-        return repo.findAll();
+    // ✅ Delete student
+    public void delete(Long id) {
+        repo.deleteById(id);
     }
 
+    // ✅ Check existence
     public boolean existsById(Long id) {
         return repo.existsById(id);
     }
 
-    // Adding this makes the controller logic cleaner
+    // ✅ Update student
     public Student updateStudent(Student existingStudent, Student updatedData) {
         existingStudent.setFullName(updatedData.getFullName());
         existingStudent.setDepartment(updatedData.getDepartment());
         existingStudent.setBatch(updatedData.getBatch());
         existingStudent.setCgpa(updatedData.getCgpa());
-        // Do NOT update ID or Email if you want to keep them constant
+
         return repo.save(existingStudent);
     }
 }

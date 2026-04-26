@@ -36,20 +36,27 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
 
     private void createDrawer() {
 
-        // ✅ SIMPLE RouterLinks (no generics issues)
-        RouterLink home = new RouterLink("Home", HomeView.class);
-        RouterLink profile = new RouterLink("My Profile", StudentView.class);
-        RouterLink addMarks = new RouterLink("Add Marks", AddAssessmentView.class);
-        RouterLink readiness = new RouterLink("Readiness", ReadinessView.class);
-        RouterLink analytics = new RouterLink("Analytics", AnalyticsView.class);
+        boolean isAdmin = SessionUtil.isAdmin();
 
-        VerticalLayout menu = new VerticalLayout(
-                home,
-                profile,
-                addMarks,
-                readiness,
-                analytics
-        );
+        VerticalLayout menu;
+
+        if (isAdmin) {
+            menu = new VerticalLayout(
+                    new RouterLink("Admin Dashboard", AdminView.class),
+                    new RouterLink("Students", AdminStudentsView.class),
+                    new RouterLink("Assessments", AdminAssessmentView.class),
+                    new RouterLink("Assessment Types", AdminAssessmentTypeView.class),
+                    new RouterLink("My Profile", StudentView.class)
+            );
+        } else {
+            menu = new VerticalLayout(
+                    new RouterLink("Home", HomeView.class),
+                    new RouterLink("My Profile", StudentView.class),
+                    new RouterLink("Add Marks", AddAssessmentView.class),
+                    new RouterLink("Readiness", ReadinessView.class),
+                    new RouterLink("Analytics", AnalyticsView.class)
+            );
+        }
 
         Button logout = new Button("Logout", e -> {
             SessionUtil.logout();

@@ -60,9 +60,6 @@ public class AnalyticsView extends VerticalLayout {
                 return;
             }
 
-            // =========================
-            // 🎯 OVERALL SCORE
-            // =========================
             double score = ReadinessUtil.calculateOverall(list);
             String status = ReadinessUtil.classify(score);
 
@@ -88,14 +85,11 @@ public class AnalyticsView extends VerticalLayout {
             card.add(scoreHero, new Hr());
 
             // =========================
-            // 📊 SKILL BREAKDOWN
+            // 📊 SKILL BREAKDOWN (FIXED)
             // =========================
             card.add(new H4("Skill Breakdown"), createCategoryBreakdown(list), new Hr());
 
-            // =========================
-            // 📈 PROGRESS TIMELINE (IMPROVED)
-            // =========================
-            list.sort((a, b) -> b.getAssessmentDate().compareTo(a.getAssessmentDate())); // latest first
+            list.sort((a, b) -> b.getAssessmentDate().compareTo(a.getAssessmentDate()));
 
             VerticalLayout timeline = new VerticalLayout();
             timeline.setSpacing(false);
@@ -141,9 +135,6 @@ public class AnalyticsView extends VerticalLayout {
 
             card.add(new H4("Progress Timeline"), timeline, new Hr());
 
-            // =========================
-            // 💡 SUGGESTIONS
-            // =========================
             H4 suggestionsHeader = new H4("Personalized Recommendations");
             card.add(suggestionsHeader);
 
@@ -183,36 +174,44 @@ public class AnalyticsView extends VerticalLayout {
     }
 
     // =========================
-    // SKILL BREAKDOWN
+    // ✅ FIXED METHOD ONLY
     // =========================
     private VerticalLayout createCategoryBreakdown(List<AssessmentResult> list) {
 
-        double coding = 0, aptitude = 0, core = 0;
-        int cCount = 0, aCount = 0, coreCount = 0;
+        double coding = 0, aptitude = 0, interview = 0;
+        int cCount = 0, aCount = 0, iCount = 0;
 
         for (AssessmentResult a : list) {
+
             double percent = (a.getScoreObtained() * 100.0) / a.getMaxScore();
 
-            switch (a.getAssessmentType()) {
-                case "Coding":
+            String type = a.getAssessmentType();
+            if (type == null) continue;
+
+            type = type.trim().toLowerCase();
+
+            switch (type) {
+                case "coding":
                     coding += percent; cCount++; break;
-                case "Aptitude":
+
+                case "aptitude":
                     aptitude += percent; aCount++; break;
-                case "Interview":
-                    core += percent; coreCount++; break;
+
+                case "interview":
+                    interview += percent; iCount++; break;
             }
         }
 
         if (cCount > 0) coding /= cCount;
         if (aCount > 0) aptitude /= aCount;
-        if (coreCount > 0) core /= coreCount;
+        if (iCount > 0) interview /= iCount;
 
         VerticalLayout layout = new VerticalLayout();
 
         layout.add(
                 createBar("Coding", coding, "#4A90E2"),
                 createBar("Aptitude", aptitude, "#F5A623"),
-                createBar("Core", core, "#27ae60")
+                createBar("Interview", interview, "#27ae60")
         );
 
         return layout;

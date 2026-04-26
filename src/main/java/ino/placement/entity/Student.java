@@ -18,17 +18,17 @@ public class Student {
 
     private String password;
     private String department;
-    
-    // Using 'batch' instead of 'year' for clarity
     private String batch;
     private Double cgpa = 0.0;
 
     @ElementCollection
     private List<String> skills;
 
-    // Getters and Setters
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.STUDENT; // ✅ DEFAULT ROLE
+
+    // Getters & Setters
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
@@ -50,4 +50,7 @@ public class Student {
 
     public List<String> getSkills() { return skills; }
     public void setSkills(List<String> skills) { this.skills = skills; }
+
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 }

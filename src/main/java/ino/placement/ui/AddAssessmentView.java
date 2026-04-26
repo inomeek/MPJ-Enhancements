@@ -1,8 +1,8 @@
 package ino.placement.ui;
 
-import ino.placement.entity.AssessmentResult;
 import ino.placement.entity.Student;
 import ino.placement.service.AssessmentResultService;
+import ino.placement.service.AssessmentTypeService;
 import ino.placement.util.SessionUtil;
 
 import com.vaadin.flow.component.button.Button;
@@ -22,7 +22,8 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 @Route(value = "add-marks", layout = MainLayout.class)
 public class AddAssessmentView extends VerticalLayout {
 
-    public AddAssessmentView(AssessmentResultService service) {
+    public AddAssessmentView(AssessmentResultService service,
+                             AssessmentTypeService typeService) {
 
         setSizeFull();
         setAlignItems(Alignment.CENTER);
@@ -62,55 +63,56 @@ public class AddAssessmentView extends VerticalLayout {
         formBody.getStyle().set("padding", "2rem");
         formBody.setSpacing(true);
 
+        // ✅ DYNAMIC TYPES FROM DB
         ComboBox<String> type = new ComboBox<>("Assessment Type");
-        type.setItems("Coding", "Aptitude", "Interview");
-        type.setPrefixComponent(VaadinIcon.ACADEMY_CAP.create());
+        type.setItems(
+                typeService.getAll().stream()
+                        .map(t -> t.getName())
+                        .toList()
+        );
+        type.setAllowCustomValue(true);
         type.setWidthFull();
 
-        NumberField score = new NumberField("Score Obtained (0-100)");
-        score.setPrefixComponent(VaadinIcon.CHART_LINE.create());
+        NumberField score = new NumberField("Score (0-100)");
         score.setMin(0);
         score.setMax(100);
-        score.setStepButtonsVisible(true);
         score.setWidthFull();
 
-        Button submit = new Button("Save Assessment", VaadinIcon.CHECK.create());
-        submit.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_LARGE);
+        Button submit = new Button("Save", VaadinIcon.CHECK.create());
+        submit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         submit.setWidthFull();
-        submit.getStyle().set("margin-top", "1rem").set("cursor", "pointer");
 
         submit.addClickListener(e -> {
 
-            // ✅ Field validation
             if (type.isEmpty() || score.isEmpty()) {
-                showError("Please fill all fields");
+                showError("Fill all fields");
                 return;
             }
 
             double val = score.getValue();
 
-            // ✅ Strict validation (extra safety beyond UI limits)
             if (val < 0 || val > 100) {
-                showError("Score must be between 0 and 100");
+                showError("Score must be 0-100");
                 return;
             }
 
             try {
-                AssessmentResult a = new AssessmentResult();
-                a.setAssessmentType(type.getValue().trim());
-                a.setScoreObtained(val);
+                // ✅ Save new type automatically if not exists
+                typeService.addType(type.getValue().trim());
 
-                service.saveOrUpdate(user.getId(), a);
+                service.saveOrUpdate(
+                        user.getId(),
+                        type.getValue().trim(),
+                        val
+                );
 
-                Notification n = Notification.show("Assessment saved successfully!");
-                n.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                n.setPosition(Notification.Position.TOP_CENTER);
+                Notification.show("Saved");
 
-                score.clear();
                 type.clear();
+                score.clear();
 
             } catch (Exception ex) {
-                showError("Error: " + ex.getMessage());
+                showError(ex.getMessage());
             }
         });
 
@@ -122,6 +124,5 @@ public class AddAssessmentView extends VerticalLayout {
     private void showError(String msg) {
         Notification n = Notification.show(msg);
         n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-        n.setPosition(Notification.Position.TOP_CENTER);
     }
 }

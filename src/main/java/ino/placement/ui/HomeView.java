@@ -82,7 +82,7 @@ public class HomeView extends VerticalLayout {
         analyticsCard.add(
                 createScoreBar("Coding", coding),
                 createScoreBar("Aptitude", aptitude),
-                createScoreBar("Core", core)
+                createScoreBar("Interview", core)
         );
 
         // 🎯 Status Card

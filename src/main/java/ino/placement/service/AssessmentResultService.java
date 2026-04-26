@@ -1,10 +1,12 @@
 package ino.placement.service;
 
-import ino.placement.entity.*;
-import ino.placement.repository.*;
+import ino.placement.entity.AssessmentResult;
+import ino.placement.entity.Student;
+import ino.placement.repository.AssessmentResultRepository;
+import ino.placement.repository.StudentRepository;
+
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDate;
+
 import java.util.List;
 
 @Service
@@ -13,29 +15,37 @@ public class AssessmentResultService {
     private final AssessmentResultRepository repo;
     private final StudentRepository studentRepo;
 
-    public AssessmentResultService(AssessmentResultRepository repo, StudentRepository studentRepo) {
+    public AssessmentResultService(AssessmentResultRepository repo,
+                                   StudentRepository studentRepo) {
         this.repo = repo;
         this.studentRepo = studentRepo;
     }
 
-    @Transactional
-    public AssessmentResult saveOrUpdate(Long studentId, AssessmentResult incoming) {
+    // ADMIN
+    public List<AssessmentResult> getAll() {
+        return repo.findAll();
+    }
+
+    // STUDENT
+    public List<AssessmentResult> getAll(Long studentId) {
+        return repo.findByStudentId(studentId);
+    }
+
+    public void saveOrUpdate(Long studentId, String type, double score) {
+
         Student student = studentRepo.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
-        AssessmentResult record = repo.findByStudentIdAndAssessmentType(studentId, incoming.getAssessmentType())
-                .orElse(new AssessmentResult());
+        AssessmentResult a = new AssessmentResult();
+        a.setStudent(student);
+        a.setAssessmentType(type);
+        a.setScoreObtained(score);
+        a.setMaxScore(100.0);
 
-        record.setStudent(student);
-        record.setAssessmentType(incoming.getAssessmentType());
-        record.setScoreObtained(incoming.getScoreObtained());
-        record.setAssessmentDate(LocalDate.now());
-        record.setMaxScore(100.0); // Standardizing to 100 for Placement metrics
-
-        return repo.save(record);
+        repo.save(a);
     }
 
-    public List<AssessmentResult> getAll(Long studentId) {
-        return repo.findByStudentId(studentId);
+    public void delete(Long id) {
+        repo.deleteById(id);
     }
 }
