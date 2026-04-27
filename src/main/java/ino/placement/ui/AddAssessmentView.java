@@ -97,7 +97,7 @@ public class AddAssessmentView extends VerticalLayout {
             }
 
             try {
-                // ✅ Save new type automatically if not exists
+                // Save new type automatically if not exists
                 typeService.addType(type.getValue().trim());
 
                 service.saveOrUpdate(

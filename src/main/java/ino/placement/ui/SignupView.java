@@ -49,13 +49,13 @@ public class SignupView extends VerticalLayout {
         email.setPrefixComponent(VaadinIcon.ENVELOPE.create());
         email.setWidthFull();
 
-        // ✅ PASSWORD FIELD
+        //  PASSWORD FIELD
         PasswordField password = new PasswordField("Password");
         password.setPrefixComponent(VaadinIcon.LOCK.create());
         password.setWidthFull();
         password.setRevealButtonVisible(true);
 
-        // ✅ CONFIRM PASSWORD FIELD
+        //  CONFIRM PASSWORD FIELD
         PasswordField confirmPassword = new PasswordField("Confirm Password");
         confirmPassword.setPrefixComponent(VaadinIcon.LOCK.create());
         confirmPassword.setWidthFull();
@@ -70,13 +70,13 @@ public class SignupView extends VerticalLayout {
         Button register = new Button("Register", e -> {
             try {
 
-                // 🔒 VALIDATION: Empty fields
+                //  VALIDATION: Empty fields
                 if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
                     showError("Please fill all required fields");
                     return;
                 }
 
-                // 🔒 VALIDATION: Password match
+                //  VALIDATION: Password match
                 if (!password.getValue().equals(confirmPassword.getValue())) {
                     showError("Passwords do not match");
                     return;
@@ -93,7 +93,7 @@ public class SignupView extends VerticalLayout {
 
                 Notification.show("Registered successfully!", 3000, Notification.Position.TOP_CENTER);
 
-                // ✅ Clear fields after success
+                //  Clear fields after success
                 name.clear();
                 email.clear();
                 password.clear();
@@ -125,47 +125,3 @@ public class SignupView extends VerticalLayout {
         n.setDuration(3000);
     }
 }
-/*
-1. Student Management
-View all registered students
-Search/filter students (by name, email)
-View individual student profiles
-Delete or deactivate student accounts
-📊 2. Global Analytics
-Total number of students
-Average scores across all students
-Overall placement readiness distribution
-Performance trends (coding, aptitude, interview)
-📈 3. Student Performance Monitoring
-View detailed performance of any student
-See latest assessment scores
-Track progress over time
-Identify weak and strong areas
-📝 4. Assessment Management
-Add new assessment types (if expandable)
-View all submitted assessments
-Edit or delete incorrect entries
-Filter assessments by date/type
-🎯 5. Readiness Overview
-List of all students with readiness status
-Filter students:
-Ready / Not Ready
-Weak in specific area
-Highlight top-performing students
-🚨 6. At-Risk Student Identification
-Automatically detect students with low scores
-Show “needs improvement” list
-Focus on weak categories (e.g., aptitude < 40%)
-💡 7. Suggestion Monitoring
-View suggestions generated for each student
-Analyze common weak areas across students
-Improve suggestion logic based on trends
-🔐 8. Admin Access Control
-Separate login for admin
-Restrict student-only features
-Secure admin routes/views
-10. Dashboard UI Features
-Summary cards (Total Students, Avg Score, Ready %)
-Tables with sorting & filtering
-Simple charts (bar/line graphs)
-*/

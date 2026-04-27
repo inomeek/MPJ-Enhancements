@@ -25,7 +25,7 @@ public class Student {
     private List<String> skills;
 
     @Enumerated(EnumType.STRING)
-    private Role role = Role.STUDENT; // ✅ DEFAULT ROLE
+    private Role role = Role.STUDENT; // DEFAULT ROLE
 
     // Getters & Setters
     public Long getId() { return id; }

@@ -11,9 +11,9 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     Optional<Student> findByEmail(String email);
 
-    // ✅ ONLY STUDENTS
+    // ONLY STUDENTS
     List<Student> findByRole(Role role);
 
-    // ✅ SEARCH
+    // SEARCH
     List<Student> findByFullNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String name, String email);
 }

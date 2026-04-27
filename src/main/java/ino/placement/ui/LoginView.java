@@ -81,7 +81,7 @@ public class LoginView extends VerticalLayout {
 
                 SessionUtil.setUser(s);
 
-                // ✅ ROLE-BASED REDIRECT
+                //  ROLE-BASED REDIRECT
                 if (s.getRole() == Role.ADMIN) {
                     getUI().ifPresent(ui -> ui.navigate("admin"));
                 } else {

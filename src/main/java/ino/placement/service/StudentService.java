@@ -19,7 +19,7 @@ public class StudentService {
         this.repo = repo;
     }
 
-    // ✅ Get all students (ONLY STUDENTS, not admins)
+    // Get all students 
     public List<Student> getAllStudents() {
         return repo.findAll()
                 .stream()
@@ -27,7 +27,7 @@ public class StudentService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ Search students by name or email
+    // Search students by name or email
     public List<Student> search(String keyword) {
 
         if (keyword == null || keyword.trim().isEmpty()) {
@@ -46,27 +46,27 @@ public class StudentService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ Get by ID
+    // Get by ID
     public Optional<Student> getById(Long id) {
         return repo.findById(id);
     }
 
-    // ✅ Save student
+    // Save student
     public Student save(Student s) {
         return repo.save(s);
     }
 
-    // ✅ Delete student
+    // Delete student
     public void delete(Long id) {
         repo.deleteById(id);
     }
 
-    // ✅ Check existence
+    // Check existence
     public boolean existsById(Long id) {
         return repo.existsById(id);
     }
 
-    // ✅ Update student
+    // Update student
     public Student updateStudent(Student existingStudent, Student updatedData) {
         existingStudent.setFullName(updatedData.getFullName());
         existingStudent.setDepartment(updatedData.getDepartment());

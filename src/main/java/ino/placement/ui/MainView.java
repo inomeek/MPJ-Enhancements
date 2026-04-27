@@ -11,11 +11,11 @@ public class MainView extends VerticalLayout {
 
     public MainView() {
 
-        // 🔐 If already logged in → go to home
+        //  If already logged in → go to home
         if (SessionUtil.getUser() != null) {
             UI.getCurrent().navigate("home");
         } 
-        // ❌ Otherwise → go to login
+        //  Otherwise → go to login
         else {
             UI.getCurrent().navigate("login");
         }

@@ -63,7 +63,7 @@ public class AdminReadinessView extends VerticalLayout implements BeforeEnterObs
 
         grid.addColumn(student -> {
             ReadinessResponse r = readinessService.evaluateStudent(student.getId());
-            return r.getInterviewScore(); // ✅ FIXED
+            return r.getInterviewScore(); 
         }).setHeader("Interview");
 
         grid.addColumn(student -> {

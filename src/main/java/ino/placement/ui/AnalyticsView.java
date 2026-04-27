@@ -84,9 +84,9 @@ public class AnalyticsView extends VerticalLayout {
 
             card.add(scoreHero, new Hr());
 
-            // =========================
-            // 📊 SKILL BREAKDOWN (FIXED)
-            // =========================
+       
+            //  SKILL BREAKDOWN 
+   
             card.add(new H4("Skill Breakdown"), createCategoryBreakdown(list), new Hr());
 
             list.sort((a, b) -> b.getAssessmentDate().compareTo(a.getAssessmentDate()));
@@ -173,9 +173,7 @@ public class AnalyticsView extends VerticalLayout {
         add(card);
     }
 
-    // =========================
-    // ✅ FIXED METHOD ONLY
-    // =========================
+    //  FIXED METHOD ONLY
     private VerticalLayout createCategoryBreakdown(List<AssessmentResult> list) {
 
         double coding = 0, aptitude = 0, interview = 0;

@@ -50,9 +50,9 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver {
         }
     }
 
-    // =========================
-    // 📊 SUMMARY CARDS
-    // =========================
+
+    //  SUMMARY CARDS
+ 
     private HorizontalLayout createSummaryCards() {
 
         List<Student> students = studentService.getAllStudents();
@@ -95,16 +95,14 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver {
         return card;
     }
 
-    // =========================
-    // 🔍 SEARCH BAR
-    // =========================
+    //  SEARCH BAR
     private HorizontalLayout createSearchBar() {
 
         TextField search = new TextField();
         search.setPlaceholder("Search by name / email...");
         search.setWidth("300px");
 
-        // 🔥 LIVE SEARCH
+        // LIVE SEARCH
         search.addValueChangeListener(e -> {
             String keyword = e.getValue();
 
@@ -123,9 +121,8 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver {
         return new HorizontalLayout(search, clear);
     }
 
-    // =========================
-    // 📋 GRID
-    // =========================
+
+    // GRID
     private void setupGrid() {
 
         grid.removeAllColumns();
@@ -137,7 +134,7 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver {
         grid.addColumn(Student::getBatch).setHeader("Batch");
         grid.addColumn(Student::getCgpa).setHeader("CGPA");
 
-        // ✅ DELETE BUTTON
+        //  DELETE BUTTON
         grid.addComponentColumn(student -> {
 
             Button delete = new Button("Delete", e -> {
@@ -149,7 +146,6 @@ public class AdminView extends VerticalLayout implements BeforeEnterObserver {
 
         }).setHeader("Actions");
 
-        // 🔥 IMPORTANT FIX (shows multiple rows)
         grid.setHeight("500px");
         grid.setWidthFull();
     }

@@ -52,7 +52,7 @@ public class HomeView extends VerticalLayout {
 
         headerLayout.add(title, subtitle);
 
-        // ✅ Fetch BOTH timeline + latest
+        // Fetch BOTH timeline + latest
         List<AssessmentResult> timeline = analyticsService.getTimeline(user.getId());
         Map<String, Double> scores = analyticsService.getLatestScores(user.getId());
 
@@ -60,7 +60,7 @@ public class HomeView extends VerticalLayout {
         double aptitude = scores.getOrDefault("Aptitude", 0.0);
         double core = scores.getOrDefault("Interview", 0.0);
 
-        // ✅ CORRECT overall calculation (uses cleaned logic)
+        //  CORRECT overall calculation (uses cleaned logic)
         double overall = ReadinessUtil.calculateOverall(timeline);
         String status = ReadinessUtil.classify(overall);
 
@@ -69,7 +69,7 @@ public class HomeView extends VerticalLayout {
         cards.setMaxWidth("1100px");
         cards.setSpacing(true);
 
-        // 👤 Profile Card
+        //  Profile Card
         VerticalLayout profileCard = createDashboardCard("Profile", VaadinIcon.USER, "#667eea");
         profileCard.add(
                 createDataLine("Department", safe(user.getDepartment())),
@@ -77,7 +77,7 @@ public class HomeView extends VerticalLayout {
                 createDataLine("CGPA", String.valueOf(user.getCgpa()))
         );
 
-        // 📊 Scores Card
+        //  Scores Card
         VerticalLayout analyticsCard = createDashboardCard("Latest Scores", VaadinIcon.CHART, "#764ba2");
         analyticsCard.add(
                 createScoreBar("Coding", coding),
@@ -85,7 +85,7 @@ public class HomeView extends VerticalLayout {
                 createScoreBar("Interview", core)
         );
 
-        // 🎯 Status Card
+        //  Status Card
         VerticalLayout readinessCard = createDashboardCard("Overall Status", VaadinIcon.FLAG, "#27ae60");
 
         H1 bigScore = new H1(String.format("%.1f%%", overall));
@@ -145,7 +145,7 @@ public class HomeView extends VerticalLayout {
 
     private VerticalLayout createScoreBar(String label, double score) {
 
-        // ✅ Clamp just in case
+        //  Clamp just in case
         score = Math.max(0, Math.min(100, score));
 
         Span l = new Span(label + ": " + String.format("%.0f%%", score));
